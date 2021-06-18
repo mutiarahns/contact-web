@@ -3,8 +3,6 @@ import Button from "react-bootstrap/Button";
 import { Table } from "react-bootstrap";
 
 function ContactTable(props) {
-
-
   return (
     <Table responsive="sm" size="md" hover bordered>
       <thead>
@@ -23,26 +21,47 @@ function ContactTable(props) {
                 <td>{`${elm.firstName || ""} ${elm.lastName}`}</td>
                 <td>{elm.age}</td>
                 <td>
-                  <img
-                    src={elm.photo}
-                    alt="avatar"
-                    style={{ height: "50px", width: "50px", borderRadius: 100 }}
-                  />
+                  {elm.photo !== "N/A" ? (
+                    <img
+                      src={elm.photo}
+                      alt="avatar"
+                      style={{
+                        height: "50px",
+                        width: "50px",
+                        borderRadius: 100,
+                      }}
+                    />
+                  ) : (
+                    <p style={{fontSize: 20}}>No photo available</p>
+                  )}
                 </td>
                 <td>
                   <Button
                     variant="outline-primary"
-                    onClick={() => {props.handleEdit(elm)}}
+                    onClick={() => {
+                      props.handleEdit(elm);
+                    }}
                     size="sm"
                   >
                     Edit
                   </Button>{" "}
                   <Button
                     variant="outline-danger"
-                    onClick={() => {props.handleDelete(elm)}}
+                    onClick={() => {
+                      props.handleDelete(elm);
+                    }}
                     size="sm"
                   >
                     Delete
+                  </Button>{" "}
+                  <Button
+                    variant="outline-info"
+                    onClick={() => {
+                      props.handleDetail(elm.id);
+                    }}
+                    size="sm"
+                  >
+                    Detail
                   </Button>
                 </td>
               </tr>

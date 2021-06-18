@@ -7,6 +7,7 @@ import {
   deleteContact,
   getContact,
   updateContact,
+  getContactById,
 } from "../../api/index";
 import Swal from "sweetalert2";
 
@@ -54,6 +55,18 @@ function HomePage() {
     setContactData(initialValue);
     setActionType("Add");
     setShowModal(true);
+  };
+
+  const handleDetail = (id) => {
+    console.log(id);
+    setActionType("Detail");
+
+    getContactById(id).then((res) => {
+      console.log(res.data.data);
+
+      setContactData(res.data.data);
+      setShowModal(true);
+    });
   };
 
   const handleDelete = (data) => {
@@ -159,6 +172,7 @@ function HomePage() {
         setActionType={setActionType}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        handleDetail={handleDetail}
       />
 
       <Modal show={isShowModal} onHide={onHide} size="lg" centered>
@@ -183,6 +197,7 @@ function HomePage() {
                     id="firstName"
                     value={contactData.firstName}
                     onChange={handleOnChangeInput}
+                    readOnly={actionType === "Detail"}
                   />
                   <Form.Control.Feedback type="invalid">
                     First name cannot be empty.
@@ -204,6 +219,7 @@ function HomePage() {
                     id="lastName"
                     value={contactData.lastName}
                     onChange={handleOnChangeInput}
+                    readOnly={actionType === "Detail"}
                   />
                   <Form.Control.Feedback type="invalid">
                     Last name cannot be empty.
@@ -225,6 +241,7 @@ function HomePage() {
                     id="age"
                     value={contactData.age}
                     onChange={handleOnChangeInput}
+                    readOnly={actionType === "Detail"}
                   />
                   <Form.Control.Feedback type="invalid">
                     Age cannot be empty.
@@ -232,23 +249,50 @@ function HomePage() {
                 </Col>
               </Form.Row>
             </Form.Group>
-            <Form.Group>
-              <Form.Row>
-                <Form.Label column="sm" lg={2}>
-                  Photo
-                </Form.Label>
-                <Col>
-                  <Form.Control
-                    size="sm"
-                    type="string"
-                    placeholder="Input link photo"
-                    id="photo"
-                    value={contactData.photo}
-                    onChange={handleOnChangeInput}
-                  />
-                </Col>
-              </Form.Row>
-            </Form.Group>
+
+            {actionType !== "Detail" ? (
+              <Form.Group>
+                <Form.Row>
+                  <Form.Label column="sm" lg={2}>
+                    Photo
+                  </Form.Label>
+                  <Col>
+                    <Form.Control
+                      size="sm"
+                      type="string"
+                      placeholder="Input link photo"
+                      id="photo"
+                      value={contactData.photo}
+                      onChange={handleOnChangeInput}
+                      readOnly={actionType === "Detail"}
+                    />
+                  </Col>
+                </Form.Row>
+              </Form.Group>
+            ) : (
+              <Form.Group>
+                <Form.Row>
+                  <Form.Label column="sm" lg={2}>
+                    Preview Photo
+                  </Form.Label>
+                  <Col>
+                    {contactData.photo !== "N/A" ? (
+                      <img
+                        src={contactData.photo}
+                        alt="avatar"
+                        style={{
+                          height: "50px",
+                          width: "50px",
+                          borderRadius: 100,
+                        }}
+                      />
+                    ) : (
+                      <p>No photo available</p>
+                    )}
+                  </Col>
+                </Form.Row>
+              </Form.Group>
+            )}
 
             <Form.Group as={Row}>
               <Col sm={{ span: 10, offset: 2 }}>
@@ -263,9 +307,11 @@ function HomePage() {
                   Close
                 </Button>
                 {"  "}
-                <Button variant="primary" size="sm" type="submit">
-                  {actionType === "Edit" ? "Edit Contact" : "Add New Contact"}
-                </Button>
+                {actionType !== "Detail" && (
+                  <Button variant="primary" size="sm" type="submit">
+                    {actionType === "Edit" ? "Edit Contact" : "Add New Contact"}
+                  </Button>
+                )}
               </Col>
             </Form.Group>
           </Form>
